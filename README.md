@@ -1,6 +1,122 @@
-# 爱奇艺 API（iQIYI API）
+# iQIYI API（爱奇艺 API）
 
-[中文](#中文) · [English](#english)
+[English](#english) · [中文](#中文)
+
+## English
+
+This repo reads public iQIYI data with Python or curl. You can search videos by keyword, read the details of one video, and look up a series on the international site with its episodes and cast. You need one EveryInfra API key. You do not need an iQIYI account or cookie. The same API also works as an MCP tool in Claude and Cursor. Billing is per call: these 3 capabilities cost $1.39 per 1,000 calls (about $0.0014 per call). Failed calls and empty results are not charged. The EveryInfra iQIYI API has 3 capabilities, all listed on the platform page: <https://everyinfra.com/en/iqiyi-api?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+### Quick start
+
+```bash
+git clone https://github.com/everyinfra/iqiyi-api.git
+cd iqiyi-api
+pip install -r requirements.txt
+export EVERYINFRA_API_KEY=<your API key>
+python main.py search 纪录片 --out videos.csv
+python main.py video "<video url>" --out video.json
+python main.py album 苍兰诀 --out album.json
+```
+
+- `video` takes only play page links that start with v_ (for example https://www.iqiyi.com/v_<id>.html). Use the `url` from a `search` result. Album pages that start with a_ do not work.
+- `album` looks up a series on the iQIYI international site by title. Pass the title, not a link.
+- Without `--out`, the command prints the first 3 rows as JSON. With `--out`, it saves a .csv or .json file. The CSV has a BOM, so Excel opens it without garbled text.
+- Register at everyinfra.com, then create the API key in the console. Steps: <https://everyinfra.com/en/docs?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api#quickstart>
+
+### curl
+
+```bash
+curl -X POST https://api.everyinfra.com/api/v1/social \
+  -H "Authorization: Bearer $EVERYINFRA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"platform":"iqiyi","action":"search","params":{"keyword":"纪录片"}}'
+```
+
+All capabilities use the same URL. Change `action` and `params` to call another one. Examples for `video` and `album` are in [examples/curl.sh](examples/curl.sh).
+
+### Claude and Cursor (MCP)
+
+The remote MCP URL is <https://api.everyinfra.com/mcp>. Add the `Authorization: Bearer` header with your API key. EveryInfra runs the server, so you install no local program.
+
+Claude Code:
+
+```bash
+claude mcp add --transport http everyinfra https://api.everyinfra.com/mcp --header "Authorization: Bearer <API Key>"
+```
+
+Cursor and other clients that read `mcp.json` ([examples/mcp.json](examples/mcp.json)):
+
+```json
+{
+  "mcpServers": {
+    "everyinfra": {
+      "url": "https://api.everyinfra.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <API Key>"
+      }
+    }
+  }
+}
+```
+
+Custom connectors in Claude on the web and desktop, and ChatGPT, accept only a URL. Enter <https://api.everyinfra.com/mcp/all>, sign in to EveryInfra when asked, and allow access. You do not need to enter a key. Full steps: <https://everyinfra.com/en/mcp-server?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+### Price
+
+| `action` | Per 1,000 calls |
+|---|---|
+| `search` | $1.39 |
+| `video` | $1.39 |
+| `album` | $1.39 |
+
+- Billing is per call, about $0.0014 each. Failed calls, empty results, parameter errors, and authentication failures are not charged.
+- A new account gets a $1 trial allowance, valid for 24 hours. No credit card is needed. How to claim it: <https://everyinfra.com/en/pricing?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+### Fields
+
+The fields of each capability are documented on the English pages linked below.
+
+- `search`: <https://everyinfra.com/en/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+- `video`: <https://everyinfra.com/en/iqiyi-api/video?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+- `album`: <https://everyinfra.com/en/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+### FAQ
+
+**Do I need an iQIYI account or cookie to call the API?**
+
+No. Send the `Authorization: Bearer` header with your API key. The request body holds `platform`, `action`, and the capability parameters. You do not scan a QR code, keep a login session, or open a browser.
+
+**How much does it cost? Are failed calls charged? Is there a free allowance?**
+
+Billing is per call, from $1.39 per 1,000 calls. Failed calls, empty results, parameter errors, and authentication failures are not charged. A new account gets a $1 trial allowance, valid for 24 hours. No credit card is needed. How to claim it: <https://everyinfra.com/en/pricing?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+**Can I connect the iQIYI API to Claude or Cursor?**
+
+Yes. The remote MCP URL is <https://api.everyinfra.com/mcp>. Add the `Authorization: Bearer` header with your API key. You install no local program. Setup for Claude, Cursor, ChatGPT, and Claude Code: <https://everyinfra.com/en/mcp-server?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>.
+
+**What legal points apply when I use iQIYI data?**
+
+The EveryInfra Terms of Service require you to make sure your use of the data follows applicable law and the terms of the relevant platform. Do not use the data for anything illegal or anything that violates privacy or intellectual property rights. Do not use bulk scraping for harassment, fraud, or other abuse. When you use personal information such as nicknames and avatars, keep only the fields your business needs.
+
+**Which iQIYI data can I get?**
+
+The EveryInfra iQIYI API has 3 capabilities:
+
+- keyword search
+- video details
+- album
+
+Parameters and return fields for each capability are on the platform page: <https://everyinfra.com/en/iqiyi-api?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+### Tested
+
+Before release, we ran the 3 commands in Quick start against the live API with this repo's code.
+
+| Command | Time (Singapore, UTC+8) | Rows | Charged |
+|---|---|---|---|
+| `python main.py search 纪录片 --out videos.csv` | 2026-11-21 09:37 | 20 | $0.001389 |
+| `python main.py video "<video url>" --out video.json` | 2026-11-21 09:38 | 1 | $0.001389 |
+| `python main.py album 苍兰诀 --out album.json` | 2026-11-21 09:43 | 10 | $0.001389 |
 
 ## 中文
 
@@ -207,122 +323,6 @@ EveryInfra 服务条款要求你自行确保数据用法符合适用法律和相
   "posted_at": "2026-11-20T14:05:00+00:00"
 }
 ```
-
-## English
-
-This repo reads public iQIYI data with Python or curl. You can search videos by keyword, read the details of one video, and look up a series on the international site with its episodes and cast. You need one EveryInfra API key. You do not need an iQIYI account or cookie. The same API also works as an MCP tool in Claude and Cursor. Billing is per call: these 3 capabilities cost $1.39 per 1,000 calls (about $0.0014 per call). Failed calls and empty results are not charged. The EveryInfra iQIYI API has 3 capabilities, all listed on the platform page: <https://everyinfra.com/en/iqiyi-api?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-### Quick start
-
-```bash
-git clone https://github.com/everyinfra/iqiyi-api.git
-cd iqiyi-api
-pip install -r requirements.txt
-export EVERYINFRA_API_KEY=<your API key>
-python main.py search 纪录片 --out videos.csv
-python main.py video "<video url>" --out video.json
-python main.py album 苍兰诀 --out album.json
-```
-
-- `video` takes only play page links that start with v_ (for example https://www.iqiyi.com/v_<id>.html). Use the `url` from a `search` result. Album pages that start with a_ do not work.
-- `album` looks up a series on the iQIYI international site by title. Pass the title, not a link.
-- Without `--out`, the command prints the first 3 rows as JSON. With `--out`, it saves a .csv or .json file. The CSV has a BOM, so Excel opens it without garbled text.
-- Register at everyinfra.com, then create the API key in the console. Steps: <https://everyinfra.com/en/docs?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api#quickstart>
-
-### curl
-
-```bash
-curl -X POST https://api.everyinfra.com/api/v1/social \
-  -H "Authorization: Bearer $EVERYINFRA_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"platform":"iqiyi","action":"search","params":{"keyword":"纪录片"}}'
-```
-
-All capabilities use the same URL. Change `action` and `params` to call another one. Examples for `video` and `album` are in [examples/curl.sh](examples/curl.sh).
-
-### Claude and Cursor (MCP)
-
-The remote MCP URL is <https://api.everyinfra.com/mcp>. Add the `Authorization: Bearer` header with your API key. EveryInfra runs the server, so you install no local program.
-
-Claude Code:
-
-```bash
-claude mcp add --transport http everyinfra https://api.everyinfra.com/mcp --header "Authorization: Bearer <API Key>"
-```
-
-Cursor and other clients that read `mcp.json` ([examples/mcp.json](examples/mcp.json)):
-
-```json
-{
-  "mcpServers": {
-    "everyinfra": {
-      "url": "https://api.everyinfra.com/mcp",
-      "headers": {
-        "Authorization": "Bearer <API Key>"
-      }
-    }
-  }
-}
-```
-
-Custom connectors in Claude on the web and desktop, and ChatGPT, accept only a URL. Enter <https://api.everyinfra.com/mcp/all>, sign in to EveryInfra when asked, and allow access. You do not need to enter a key. Full steps: <https://everyinfra.com/en/mcp-server?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-### Price
-
-| `action` | Per 1,000 calls |
-|---|---|
-| `search` | $1.39 |
-| `video` | $1.39 |
-| `album` | $1.39 |
-
-- Billing is per call, about $0.0014 each. Failed calls, empty results, parameter errors, and authentication failures are not charged.
-- A new account gets a $1 trial allowance, valid for 24 hours. No credit card is needed. How to claim it: <https://everyinfra.com/en/pricing?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-### Fields
-
-The fields of each capability are documented on the English pages linked below.
-
-- `search`: <https://everyinfra.com/en/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-- `video`: <https://everyinfra.com/en/iqiyi-api/video?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-- `album`: <https://everyinfra.com/en/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-### FAQ
-
-**Do I need an iQIYI account or cookie to call the API?**
-
-No. Send the `Authorization: Bearer` header with your API key. The request body holds `platform`, `action`, and the capability parameters. You do not scan a QR code, keep a login session, or open a browser.
-
-**How much does it cost? Are failed calls charged? Is there a free allowance?**
-
-Billing is per call, from $1.39 per 1,000 calls. Failed calls, empty results, parameter errors, and authentication failures are not charged. A new account gets a $1 trial allowance, valid for 24 hours. No credit card is needed. How to claim it: <https://everyinfra.com/en/pricing?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-**Can I connect the iQIYI API to Claude or Cursor?**
-
-Yes. The remote MCP URL is <https://api.everyinfra.com/mcp>. Add the `Authorization: Bearer` header with your API key. You install no local program. Setup for Claude, Cursor, ChatGPT, and Claude Code: <https://everyinfra.com/en/mcp-server?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>.
-
-**What legal points apply when I use iQIYI data?**
-
-The EveryInfra Terms of Service require you to make sure your use of the data follows applicable law and the terms of the relevant platform. Do not use the data for anything illegal or anything that violates privacy or intellectual property rights. Do not use bulk scraping for harassment, fraud, or other abuse. When you use personal information such as nicknames and avatars, keep only the fields your business needs.
-
-**Which iQIYI data can I get?**
-
-The EveryInfra iQIYI API has 3 capabilities:
-
-- keyword search
-- video details
-- album
-
-Parameters and return fields for each capability are on the platform page: <https://everyinfra.com/en/iqiyi-api?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-
-### Tested
-
-Before release, we ran the 3 commands in Quick start against the live API with this repo's code.
-
-| Command | Time (Singapore, UTC+8) | Rows | Charged |
-|---|---|---|---|
-| `python main.py search 纪录片 --out videos.csv` | 2026-11-21 09:37 | 20 | $0.001389 |
-| `python main.py video "<video url>" --out video.json` | 2026-11-21 09:38 | 1 | $0.001389 |
-| `python main.py album 苍兰诀 --out album.json` | 2026-11-21 09:43 | 10 | $0.001389 |
 
 ## License
 
