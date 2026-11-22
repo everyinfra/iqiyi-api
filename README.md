@@ -74,11 +74,70 @@ Custom connectors in Claude on the web and desktop, and ChatGPT, accept only a U
 
 ### Fields
 
-The fields of each capability are documented on the English pages linked below.
+These are the fields that the 3 capabilities returned in our test. Each meaning is the first sentence of the field's entry in the API documentation. The link under each table has the full text.
 
-- `search`: <https://everyinfra.com/en/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-- `video`: <https://everyinfra.com/en/iqiyi-api/video?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
-- `album`: <https://everyinfra.com/en/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+#### `search` (keyword search)
+
+| Field | Meaning |
+|---|---|
+| `id` | The record's unique ID on the platform. |
+| `url` | Link to the record on the platform. |
+| `title` | Title. null when the platform has no titles (for example text-only posts). |
+| `category` | Category name in the platform's own taxonomy, not normalized across platforms. |
+| `duration_seconds` | Duration in seconds. null for content that is not video or audio. |
+| `like_count` | Likes. null means the platform or this capability does not disclose it; it is not 0. |
+| `comment_count` | Comments. null means not disclosed, not 0. |
+| `collect_count` | Saves or favorites. null means not disclosed, not 0. |
+| `image_url` | Image link. |
+| `author_name` | Author's display name. |
+| `author_id` | Author's unique ID on the platform. |
+| `author_follower_count` | Author's follower count. null means not disclosed. |
+| `posted_at` | Publish time in ISO 8601, UTC (for example 2026-08-07T12:34:56+00:00). |
+| `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
+
+Other fields that the test returned: `category_id`, `heat_count`, `wide_image_url`, `author_avatar_url`, `author_video_count`, `duration_sec`, `author_location`, and `author_org`.
+
+All parameters and fields: <https://everyinfra.com/en/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+#### `video` (video details)
+
+| Field | Meaning |
+|---|---|
+| `id` | The record's unique ID on the platform. |
+| `url` | Link to the record on the platform. |
+| `title` | Title. null when the platform has no titles (for example text-only posts). |
+| `category` | Category name in the platform's own taxonomy, not normalized across platforms. |
+| `like_count` | Likes. null means the platform or this capability does not disclose it; it is not 0. |
+| `comment_count` | Comments. null means not disclosed, not 0. |
+| `collect_count` | Saves or favorites. null means not disclosed, not 0. |
+| `image_url` | Image link. |
+| `author_name` | Author's display name. |
+| `author_id` | Author's unique ID on the platform. |
+| `author_follower_count` | Author's follower count. null means not disclosed. |
+| `posted_at` | Publish time in ISO 8601, UTC (for example 2026-08-07T12:34:56+00:00). |
+| `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
+
+Other fields that the test returned: `category_id`, `heat_count`, `wide_image_url`, `author_avatar_url`, `author_video_count`, `author_location`, and `author_org`.
+
+All parameters and fields: <https://everyinfra.com/en/iqiyi-api/video?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
+
+#### `album` (album)
+
+| Field | Meaning |
+|---|---|
+| `id` | The record's unique ID on the platform. |
+| `url` | Link to the record on the platform. |
+| `title` | Title. null when the platform has no titles (for example text-only posts). |
+| `type` | Record type; values depend on the capability (for example video / image / text). |
+| `image_url` | Image link. |
+| `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
+| `duration_seconds` | Duration in seconds. null for content that is not video or audio. |
+| `rating` | Rating. **The scale varies by platform**: rating_scale on the same row gives the maximum (usually 5; Booking, Douban, iQIYI and NAVER use 10). |
+| `rating_scale` | Maximum of rating in the same row: 5 for five-star scales, 10 for ten-point scales. |
+
+Other fields that the test returned: `play_url`, `is_series`, `year`, `release_date`, `episode_count`, `episode_available_count`, `episodes`, `cast`, `subtitle`, `content_rating`, and `duration_sec`.
+
+All parameters and fields: <https://everyinfra.com/en/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
 ### FAQ
 
