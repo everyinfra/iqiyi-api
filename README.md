@@ -84,18 +84,24 @@ These are the fields that the 3 capabilities returned in our test. Each meaning 
 | `url` | Link to the record on the platform. |
 | `title` | Title. null when the platform has no titles (for example text-only posts). |
 | `category` | Category name in the platform's own taxonomy, not normalized across platforms. |
+| `category_id` | Category ID. |
 | `duration_seconds` | Duration in seconds. null for content that is not video or audio. |
+| `heat_count` | iQIYI heat value. **It is a platform-specific metric, not a play count**, and cannot be compared across platforms. |
 | `like_count` | Likes. null means the platform or this capability does not disclose it; it is not 0. |
 | `comment_count` | Comments. null means not disclosed, not 0. |
 | `collect_count` | Saves or favorites. null means not disclosed, not 0. |
 | `image_url` | Image link. |
+| `wide_image_url` | Landscape poster. |
 | `author_name` | Author's display name. |
 | `author_id` | Author's unique ID on the platform. |
+| `author_avatar_url` | Uploader avatar (search / video). |
 | `author_follower_count` | Author's follower count. null means not disclosed. |
+| `author_video_count` | Number of videos the author has published. |
+| `duration_sec` | Duration in seconds, the same value as duration_seconds (both names are returned). |
 | `posted_at` | Publish time in ISO 8601, UTC (for example 2026-08-07T12:34:56+00:00). |
 | `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
-
-Other fields that the test returned: `category_id`, `heat_count`, `wide_image_url`, `author_avatar_url`, `author_video_count`, `duration_sec`, `author_location`, and `author_org`.
+| `author_location` | Uploader location, as written on the page (search / video). |
+| `author_org` | Verified organization name (for organization accounts). |
 
 All parameters and fields: <https://everyinfra.com/en/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
@@ -107,17 +113,22 @@ All parameters and fields: <https://everyinfra.com/en/iqiyi-api/search?utm_sourc
 | `url` | Link to the record on the platform. |
 | `title` | Title. null when the platform has no titles (for example text-only posts). |
 | `category` | Category name in the platform's own taxonomy, not normalized across platforms. |
+| `category_id` | Category ID. |
+| `heat_count` | iQIYI heat value. **It is a platform-specific metric, not a play count**, and cannot be compared across platforms. |
 | `like_count` | Likes. null means the platform or this capability does not disclose it; it is not 0. |
 | `comment_count` | Comments. null means not disclosed, not 0. |
 | `collect_count` | Saves or favorites. null means not disclosed, not 0. |
 | `image_url` | Image link. |
+| `wide_image_url` | Landscape poster. |
 | `author_name` | Author's display name. |
 | `author_id` | Author's unique ID on the platform. |
+| `author_avatar_url` | Uploader avatar (search / video). |
 | `author_follower_count` | Author's follower count. null means not disclosed. |
+| `author_video_count` | Number of videos the author has published. |
+| `author_location` | Uploader location, as written on the page (search / video). |
+| `author_org` | Verified organization name (for organization accounts). |
 | `posted_at` | Publish time in ISO 8601, UTC (for example 2026-08-07T12:34:56+00:00). |
 | `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
-
-Other fields that the test returned: `category_id`, `heat_count`, `wide_image_url`, `author_avatar_url`, `author_video_count`, `author_location`, and `author_org`.
 
 All parameters and fields: <https://everyinfra.com/en/iqiyi-api/video?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
@@ -127,15 +138,24 @@ All parameters and fields: <https://everyinfra.com/en/iqiyi-api/video?utm_source
 |---|---|
 | `id` | The record's unique ID on the platform. |
 | `url` | Link to the record on the platform. |
+| `play_url` | Playback page link. |
 | `title` | Title. null when the platform has no titles (for example text-only posts). |
 | `type` | Record type; values depend on the capability (for example video / image / text). |
+| `is_series` | Whether it is a series (as opposed to a single film). |
+| `year` | Year. |
+| `release_date` | Release date. |
+| `episode_count` | Number of episodes. |
+| `episode_available_count` | Number of episodes currently available to watch. |
 | `image_url` | Image link. |
+| `episodes` | List of episodes. |
+| `cast` | Cast list. |
 | `platform` | Source platform identifier, the same as platform in the request (for example xiaohongshu, tiktok). |
+| `subtitle` | Subtitle. |
 | `duration_seconds` | Duration in seconds. null for content that is not video or audio. |
 | `rating` | Rating. **The scale varies by platform**: rating_scale on the same row gives the maximum (usually 5; Booking, Douban, iQIYI and NAVER use 10). |
+| `content_rating` | Content rating. |
+| `duration_sec` | Duration in seconds, the same value as duration_seconds (both names are returned). |
 | `rating_scale` | Maximum of rating in the same row: 5 for five-star scales, 10 for ten-point scales. |
-
-Other fields that the test returned: `play_url`, `is_series`, `year`, `release_date`, `episode_count`, `episode_available_count`, `episodes`, `cast`, `subtitle`, `content_rating`, and `duration_sec`.
 
 All parameters and fields: <https://everyinfra.com/en/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
@@ -272,12 +292,11 @@ Claude 网页版和桌面版的自定义连接器、ChatGPT 只能填网址：�
 | `author_avatar_url` | 上传者头像（search / video）。 |
 | `author_follower_count` | 作者粉丝数。 |
 | `author_video_count` | 作者发布视频数。 |
+| `duration_sec` | 时长，单位秒，与 duration_seconds 同值（两个名字都返回）。 |
 | `posted_at` | 发布时间，ISO 8601 格式、UTC 时区（如 2026-08-07T12:34:56+00:00）。 |
 | `platform` | 数据来源平台标识，与请求里的 platform 一致（如 xiaohongshu、tiktok）。 |
 | `author_location` | 上传者所在地，按页面原文（search / video）。 |
 | `author_org` | 认证机构名（机构号用）。 |
-
-实测还返回了 `duration_sec`，接口文档里还没有它的中文说明，表里没列。
 
 完整参数和字段：<https://everyinfra.com/iqiyi-api/search?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
@@ -330,9 +349,8 @@ Claude 网页版和桌面版的自定义连接器、ChatGPT 只能填网址：�
 | `duration_seconds` | 时长，单位秒。 |
 | `rating` | 评分。 |
 | `content_rating` | 内容分级。 |
+| `duration_sec` | 时长，单位秒，与 duration_seconds 同值（两个名字都返回）。 |
 | `rating_scale` | 上一列 `rating` 的满分。 |
-
-实测还返回了 `duration_sec`，接口文档里还没有它的中文说明，表里没列。
 
 完整参数和字段：<https://everyinfra.com/iqiyi-api/album?utm_source=github&utm_medium=example_repo&utm_campaign=iqiyi-api>
 
